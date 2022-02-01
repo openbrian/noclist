@@ -1,11 +1,18 @@
 """The Foo module provides things and functions."""
 
+from __future__ import annotations
 
-# pylint: disable=too-few-public-methods
+from hashlib import sha256
+
+
 class Noclist:
-    """The Foo class provides sample methods."""
+    """The Noclist class calls the adhoc/noclist server."""
 
     @staticmethod
-    def do_something() -> bool:
-        """Return true, always."""
+    def authenticate() -> bool:
         return True
+
+    @staticmethod
+    def build_checksum(auth_token: str, request_path: str) -> str:
+        target: bytes = str.encode(f"{auth_token}{request_path}")
+        return sha256(target).hexdigest()
