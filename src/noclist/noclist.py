@@ -2,7 +2,7 @@
 
 from hashlib import sha256
 from logging import DEBUG, Formatter, Logger, StreamHandler, getLogger
-from sys import stdout
+from sys import stderr
 from typing import Optional
 from urllib.error import URLError
 from urllib.request import Request, urlopen
@@ -46,7 +46,7 @@ class Noclist:
 def get_logger() -> Logger:
     logger = getLogger()
     logger.setLevel(DEBUG)
-    handler = StreamHandler(stdout)
+    handler = StreamHandler(stderr)
     handler.setLevel(DEBUG)
     formatter = Formatter("DEBUG: %(name)s - %(levelname)s - %(message)s")
     handler.setFormatter(formatter)
