@@ -51,3 +51,18 @@ def test_build_checksum() -> None:
     hash_: str = noclist.Noclist.build_checksum(auth_token, request_path)
     # Assert
     assert hash_ == expected_checksum
+
+
+def test_get_users(mocker: MockerFixture) -> None:
+    # Arrange
+    user_list_bytes: bytes = b"user list"
+    user_list: str = "user list"
+    mock_urlopen = mocker.patch("src.noclist.noclist.urlopen")
+    # token: str = "5D51D045-EEFE-A60D-090C-CAF9935400FE"
+    context_manager = mocker.MagicMock()
+    context_manager.getcode.return_value = 200
+    context_manager.read.return_value = user_list_bytes
+    context_manager.__enter__.return_value = context_manager
+    mock_urlopen.return_value = context_manager
+    # Act and Assert
+    assert noclist.Noclist.get_users("checksum") == [user_list]

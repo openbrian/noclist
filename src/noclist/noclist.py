@@ -3,7 +3,7 @@
 from hashlib import sha256
 from logging import DEBUG, Formatter, Logger, StreamHandler, getLogger
 from sys import stderr
-from typing import Optional
+from typing import List, Optional
 from urllib.error import URLError
 from urllib.request import Request, urlopen
 
@@ -41,6 +41,15 @@ class Noclist:
     def build_checksum(auth_token: str, request_path: str) -> str:
         target: bytes = str.encode(f"{auth_token}{request_path}")
         return sha256(target).hexdigest()
+
+    @staticmethod
+    def get_users(checksum: str) -> List[str]:
+        url: str = f"{NOCHOST}/users"
+        headers: dict[str, str] = {"X-Request-Checksum": checksum}
+        request = Request(url, headers=headers)
+        with urlopen(request) as response:
+            data: str = response.read().decode("UTF-8")
+        return data.split("\n")
 
 
 def get_logger() -> Logger:
