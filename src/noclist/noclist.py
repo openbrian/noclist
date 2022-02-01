@@ -1,7 +1,5 @@
 """The Foo module provides things and functions."""
 
-from __future__ import annotations
-
 from hashlib import sha256
 
 
