@@ -33,7 +33,7 @@ class Noclist:
         #     return None
         except URLError as error:
             logger: Logger = get_logger()
-            logger.debug("auth 2 urlerror")
+            logger.debug("There was an issue connecting to %s.", url)
             logger.debug(error)
             return None
 

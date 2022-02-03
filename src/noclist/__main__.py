@@ -16,7 +16,7 @@ def main() -> bool:
     # print(f"token is {token}")
     if token is not None:
         checksum: str = Noclist.build_checksum(token, "/users")
-        users: str = Noclist.get_users(checksum)
+        users: list[str] = Noclist.get_users(checksum)
         print(users)
         return True
     return False
