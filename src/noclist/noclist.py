@@ -14,13 +14,13 @@ class Noclist:
     """The Noclist class calls the adhoc/noclist server."""
 
     @staticmethod
-    def authenticate() -> Optional[str]:
+    def authenticate(timeout: float) -> Optional[str]:
         """Returns the token."""
         url: str = f"{NOCHOST}/auth"
         request = Request(url)
         try:
             # urlopen will handle redirects
-            with urlopen(request) as response:
+            with urlopen(request, timeout=timeout) as response:
                 # This lookup is case-insensitive.  If this header is not
                 # present None is returned.
                 return str(response.headers["badsec-authentication-token"])
@@ -43,11 +43,11 @@ class Noclist:
         return sha256(target).hexdigest()
 
     @staticmethod
-    def get_users(checksum: str) -> List[str]:
+    def get_users(checksum: str, timeout: float) -> List[str]:
         url: str = f"{NOCHOST}/users"
         headers: dict[str, str] = {"X-Request-Checksum": checksum}
         request = Request(url, headers=headers)
-        with urlopen(request) as response:
+        with urlopen(request, timeout=timeout) as response:
             data: str = response.read().decode("UTF-8")
         return data.split("\n")
 

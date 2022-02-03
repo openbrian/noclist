@@ -9,7 +9,7 @@ from pytest_mock import MockerFixture
 from src.noclist import noclist
 
 
-def test_authenticate(mocker: MockerFixture) -> None:
+def test_authenticate(mocker: MockerFixture, timeout: float) -> None:
     # Arrange
     mock_urlopen = mocker.patch("src.noclist.noclist.urlopen")
     token: str = "5D51D045-EEFE-A60D-090C-CAF9935400FE"
@@ -20,24 +20,30 @@ def test_authenticate(mocker: MockerFixture) -> None:
     context_manager.__enter__.return_value = context_manager
     mock_urlopen.return_value = context_manager
     # Act and Assert
-    assert noclist.Noclist.authenticate() == token
+    assert noclist.Noclist.authenticate(timeout) == token
 
 
-def test_authenticate_server_down(mocker: MockerFixture) -> None:
+def test_authenticate_server_down(
+    mocker: MockerFixture,
+    timeout: float,
+) -> None:
     # Arrange
     message = "The connection refused"
     mocker.patch("urllib.request.urlopen", side_effect=URLError(message))
     # Act and Assert
-    assert noclist.Noclist.authenticate() is None
+    assert noclist.Noclist.authenticate(timeout) is None
 
 
-def test_authenticate_http_error(mocker: MockerFixture) -> None:
+def test_authenticate_http_error(
+    mocker: MockerFixture,
+    timeout: float,
+) -> None:
     # Arrange
     message: Message = Message()
     http_error: HTTPError = HTTPError("url", 42, "msg", message, None)
     mocker.patch("urllib.request.urlopen", side_effect=http_error)
     # Act and Assert
-    assert noclist.Noclist.authenticate() is None
+    assert noclist.Noclist.authenticate(timeout) is None
 
 
 def test_build_checksum() -> None:
@@ -53,7 +59,7 @@ def test_build_checksum() -> None:
     assert hash_ == expected_checksum
 
 
-def test_get_users(mocker: MockerFixture) -> None:
+def test_get_users(mocker: MockerFixture, timeout: float) -> None:
     # Arrange
     user_list_bytes: bytes = b"user list"
     user_list: str = "user list"
@@ -65,4 +71,4 @@ def test_get_users(mocker: MockerFixture) -> None:
     context_manager.__enter__.return_value = context_manager
     mock_urlopen.return_value = context_manager
     # Act and Assert
-    assert noclist.Noclist.get_users("checksum") == [user_list]
+    assert noclist.Noclist.get_users("checksum", timeout) == [user_list]

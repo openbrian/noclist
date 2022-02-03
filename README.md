@@ -27,6 +27,20 @@ A coverage report is created in HTML format in the htmlcov folder.
 
 # Using
 
+Optionally set an environment variable for the timeout.  The default timeout is 2 seconds.
+
+```shell
+export NOCLIST_TIMEOUT=1.0
+```
+
+Start a BADLIST server.
+
+```shell
+docker run --rm -p 8888:8888 adhocteam/noclist
+```
+
+Send logging to /dev/null.
+
 ```shell
 python -m src.noclist 2>/dev/null
 ```
