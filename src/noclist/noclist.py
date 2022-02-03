@@ -21,6 +21,8 @@ class Noclist:
     @staticmethod
     def authenticate(timeout: float) -> Optional[str]:
         """Returns the token."""
+        # BCD: Even though I mock out an HTTPError side_effect, urlopen will
+        # raise a URLError!
         url: str = f"{NOCHOST}/auth"
         request = Request(url)
         try:
@@ -29,13 +31,6 @@ class Noclist:
                 # This lookup is case-insensitive.  If this header is not
                 # present None is returned.
                 return str(response.headers["badsec-authentication-token"])
-        # BCD: Even though I mock out an HTTPError side_effect, urlopen will
-        # raise a URLError!
-        # except HTTPError as error:
-        #     logger = get_logger()
-        #     logger.debug('auth 1 httperror')
-        #     logger.debug(error)
-        #     return None
         except URLError as error:
             logger: Logger = get_logger()
             logger.debug("There was an issue connecting to %s.", url)
