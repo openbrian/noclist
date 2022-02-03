@@ -14,8 +14,6 @@ def test_authenticate(mocker: MockerFixture, timeout: float) -> None:
     mock_urlopen = mocker.patch("src.noclist.noclist.urlopen")
     token: str = "5D51D045-EEFE-A60D-090C-CAF9935400FE"
     context_manager = mocker.MagicMock()
-    # context_manager.getcode.return_value = 200
-    # context_manager.read.return_value = 'http body is irrelevant'
     context_manager.headers.__getitem__.return_value = token  # any header key
     context_manager.__enter__.return_value = context_manager
     mock_urlopen.return_value = context_manager
