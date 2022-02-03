@@ -4,6 +4,7 @@
 # https://docs.python.org/3/library/runpy.html
 # https://docs.python.org/3/reference/import.html#special-considerations-for-main
 
+import json
 import os
 import sys
 from logging import Logger
@@ -29,7 +30,7 @@ def run() -> bool:
     if token is not None:
         checksum: str = Noclist.build_checksum(token, "/users")
         users: list[str] = Noclist.get_users(checksum, timeout)
-        print(users)
+        print(json.dumps(users))
         return True
     return False
 
