@@ -14,7 +14,6 @@ def main() -> bool:
     """Execute the Something standalone command-line tool."""
     timeout: float = float(os.getenv("NOCLIST_TIMEOUT", "2.0"))  # seconds
     token: str = Noclist.authenticate(timeout)
-    # print(f"token is {token}")
     if token is not None:
         checksum: str = Noclist.build_checksum(token, "/users")
         users: list[str] = Noclist.get_users(checksum, timeout)
