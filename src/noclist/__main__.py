@@ -25,14 +25,17 @@ def main() -> bool:
 
 def run() -> bool:
     """Execute the Something standalone command-line tool."""
+    logger: Logger = get_logger()
     timeout: float = float(os.getenv("NOCLIST_TIMEOUT", "2.0"))  # seconds
     token: str = Noclist.authenticate(timeout)
     if token is not None:
         checksum: str = Noclist.build_checksum(token, "/users")
         users: list[str] = Noclist.get_users(checksum, timeout)
+        if len(users) == 0:
+            logger.debug("/users returned no valid users")
+            return False
         print(json.dumps(users))
         return True
-    logger: Logger = get_logger()
     logger.debug("Could not authenticate.")
     return False
 

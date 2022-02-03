@@ -14,11 +14,27 @@ def test_authenticate(mocker: MockerFixture, timeout: float) -> None:
     mock_urlopen = mocker.patch("src.noclist.noclist.urlopen")
     token: str = "5D51D045-EEFE-A60D-090C-CAF9935400FE"
     context_manager = mocker.MagicMock()
+    context_manager.status = 200
+    # context_manager.read.return_value = 'http body is irrelevant'
     context_manager.headers.__getitem__.return_value = token  # any header key
     context_manager.__enter__.return_value = context_manager
     mock_urlopen.return_value = context_manager
     # Act and Assert
     assert Noclist.authenticate(timeout) == token
+
+
+def test_authenticate_bad_status(
+    mocker: MockerFixture,
+    timeout: float,
+) -> None:
+    # Arrange
+    mock_urlopen = mocker.patch("src.noclist.noclist.urlopen")
+    context_manager = mocker.MagicMock()
+    context_manager.status = 418  # teapot
+    context_manager.__enter__.return_value = context_manager
+    mock_urlopen.return_value = context_manager
+    # Act and Assert
+    assert Noclist.authenticate(timeout) is None
 
 
 def test_authenticate_server_down(
@@ -64,12 +80,24 @@ def test_get_users(mocker: MockerFixture, timeout: float) -> None:
     mock_urlopen = mocker.patch("src.noclist.noclist.urlopen")
     # token: str = "5D51D045-EEFE-A60D-090C-CAF9935400FE"
     context_manager = mocker.MagicMock()
-    context_manager.getcode.return_value = 200
+    context_manager.status = 200
     context_manager.read.return_value = user_list_bytes
     context_manager.__enter__.return_value = context_manager
     mock_urlopen.return_value = context_manager
     # Act and Assert
     assert Noclist.get_users("checksum", timeout) == [user_list]
+
+
+def test_get_users_bad_status(mocker: MockerFixture, timeout: float) -> None:
+    # Arrange
+    mock_urlopen = mocker.patch("src.noclist.noclist.urlopen")
+    # token: str = "5D51D045-EEFE-A60D-090C-CAF9935400FE"
+    context_manager = mocker.MagicMock()
+    context_manager.status = 418  # teapot
+    context_manager.__enter__.return_value = context_manager
+    mock_urlopen.return_value = context_manager
+    # Act and Assert
+    assert Noclist.get_users("checksum", timeout) == []
 
 
 def test_is_valid_uid() -> None:
