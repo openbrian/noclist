@@ -9,6 +9,7 @@ from urllib.request import Request, urlopen
 from src.noclist.utils import get_logger
 
 NOCHOST: str = "http://localhost:8888"
+LOG: Logger = get_logger()
 
 
 class Noclist:
@@ -26,20 +27,19 @@ class Noclist:
         url: str = f"{NOCHOST}/auth"
         request = Request(url)
         try:
-            logger: Logger = get_logger()
             # urlopen will handle redirects
             with urlopen(request, timeout=timeout) as response:
                 # This lookup is case-insensitive.  If this header is not
                 # present None is returned.
                 if response.status != 200:
-                    logger.debug(
+                    LOG.debug(
                         "a Auth response code was not 200",
                     )
                     return None
                 return str(response.headers["badsec-authentication-token"])
         except URLError as error:
-            logger.debug("There was an issue connecting to %s.", url)
-            logger.debug(error)
+            LOG.debug("There was an issue connecting to %s.", url)
+            LOG.debug(error)
             return None
 
     @staticmethod
@@ -49,18 +49,17 @@ class Noclist:
 
     @staticmethod
     def get_users(checksum: str, timeout: float) -> List[str]:
-        logger: Logger = get_logger()
         url: str = f"{NOCHOST}/users"
         headers: dict[str, str] = {"X-Request-Checksum": checksum}
         request = Request(url, headers=headers)
         with urlopen(request, timeout=timeout) as response:
             if response.status != 200:
-                logger.debug(
+                LOG.debug(
                     "Auth response code was not 200",
                 )
                 return []
             data: str = response.read().decode("UTF-8")
-        logger.debug(data)
+        LOG.debug(data)
         uids: list[str] = data.split("\n")
         valid_data = [uid for uid in uids if Noclist.is_valid_uid(uid)]
         return valid_data

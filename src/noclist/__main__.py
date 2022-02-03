@@ -12,31 +12,31 @@ from logging import Logger
 from src.noclist.noclist import Noclist
 from src.noclist.utils import get_logger
 
+LOG: Logger = get_logger()
+
 
 def main() -> bool:
     try:
         return run()
     except Exception as exc_info:  # pylint: disable=broad-except
-        logger: Logger = get_logger()
-        logger.debug("There was an exception.")
-        logger.debug(exc_info)
+        LOG.debug("There was an exception.")
+        LOG.debug(exc_info)
         return False
 
 
 def run() -> bool:
     """Execute the Something standalone command-line tool."""
-    logger: Logger = get_logger()
     timeout: float = float(os.getenv("NOCLIST_TIMEOUT", "2.0"))  # seconds
     token: str = Noclist.authenticate(timeout)
     if token is not None:
         checksum: str = Noclist.build_checksum(token, "/users")
         users: list[str] = Noclist.get_users(checksum, timeout)
         if len(users) == 0:
-            logger.debug("/users returned no valid users")
+            LOG.debug("/users returned no valid users")
             return False
         print(json.dumps(users))
         return True
-    logger.debug("Could not authenticate.")
+    LOG.debug("Could not authenticate.")
     return False
 
 
