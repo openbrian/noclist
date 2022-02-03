@@ -18,6 +18,7 @@ class Noclist:
     # BCD assumptions
     UID_MIN_LENGTH: int = 5
     UID_MAX_LENGTH: int = 20
+    ATTEMPT_MAX_NUM: int = 3
 
     @staticmethod
     def authenticate(timeout: float) -> Optional[str]:
@@ -26,21 +27,42 @@ class Noclist:
         # raise a URLError!
         url: str = f"{NOCHOST}/auth"
         request = Request(url)
+        [token, _] = Noclist._call_api(Noclist.ATTEMPT_MAX_NUM, request, timeout)
+        if len(token) == 0:  # Assume an empty token is not a valid token
+            return None
+        return token
+
+    @staticmethod
+    def _call_api(
+        attempt_number: int, request: Request, timeout: float
+    ) -> tuple[str, str]:
+        """Recursively tries to call the API.  Will fail if attempt_number is 0.
+        Returns tuple of the:
+           * badsec-authentication-token or ""
+           * http body or "".
+        This method does not handle any business logic of Noclist aside from
+        trying multiple times to call the API.
+        """
+        LOG.debug("_call_api attempt %s", attempt_number)
+        if attempt_number == 0:
+            return "", ""
         try:
             # urlopen will handle redirects
             with urlopen(request, timeout=timeout) as response:
+                if response.status != 200:
+                    LOG.debug("Auth response code was not 200")
+                    return Noclist._call_api(attempt_number - 1, request, timeout)
                 # This lookup is case-insensitive.  If this header is not
                 # present None is returned.
-                if response.status != 200:
-                    LOG.debug(
-                        "a Auth response code was not 200",
-                    )
-                    return None
-                return str(response.headers["badsec-authentication-token"])
+                token: str = str(response.headers["badsec-authentication-token"])
+                data: str = response.read().decode("UTF-8")
+                LOG.debug(token)
+                LOG.debug(data)
+                return token, data
         except URLError as error:
-            LOG.debug("There was an issue connecting to %s.", url)
+            LOG.debug("There was an issue connecting to the API.")
             LOG.debug(error)
-            return None
+            return Noclist._call_api(attempt_number - 1, request, timeout)
 
     @staticmethod
     def build_checksum(auth_token: str, request_path: str) -> str:
@@ -52,14 +74,9 @@ class Noclist:
         url: str = f"{NOCHOST}/users"
         headers: dict[str, str] = {"X-Request-Checksum": checksum}
         request = Request(url, headers=headers)
-        with urlopen(request, timeout=timeout) as response:
-            if response.status != 200:
-                LOG.debug(
-                    "Auth response code was not 200",
-                )
-                return []
-            data: str = response.read().decode("UTF-8")
-        LOG.debug(data)
+        [_, data] = Noclist._call_api(Noclist.ATTEMPT_MAX_NUM, request, timeout)
+        if len(data) == 0:
+            return []
         uids: list[str] = data.split("\n")
         valid_data = [uid for uid in uids if Noclist.is_valid_uid(uid)]
         return valid_data
