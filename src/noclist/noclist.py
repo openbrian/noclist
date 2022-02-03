@@ -16,7 +16,7 @@ class Noclist:
     """The Noclist class calls the adhoc/noclist server."""
 
     # BCD assumptions
-    UID_MIN_LENGHT: int = 5
+    UID_MIN_LENGTH: int = 5
     UID_MAX_LENGTH: int = 20
 
     @staticmethod
@@ -68,7 +68,7 @@ class Noclist:
     def is_valid_uid(uid: str) -> bool:
         """This validation is based on empirical evidence from BCD.  It's
         not specified."""
-        if len(uid) < Noclist.UID_MIN_LENGHT:
+        if len(uid) < Noclist.UID_MIN_LENGTH:
             return False
         if Noclist.UID_MAX_LENGTH < len(uid):
             return False
