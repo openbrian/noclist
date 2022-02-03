@@ -1,11 +1,12 @@
 """The Foo module provides things and functions."""
 
 from hashlib import sha256
-from logging import DEBUG, Formatter, Logger, StreamHandler, getLogger
-from sys import stderr
+from logging import Logger
 from typing import List, Optional
 from urllib.error import URLError
 from urllib.request import Request, urlopen
+
+from src.noclist.utils import get_logger
 
 NOCHOST: str = "http://localhost:8888"
 
@@ -50,14 +51,3 @@ class Noclist:
         with urlopen(request, timeout=timeout) as response:
             data: str = response.read().decode("UTF-8")
         return data.split("\n")
-
-
-def get_logger() -> Logger:
-    logger = getLogger()
-    logger.setLevel(DEBUG)
-    handler = StreamHandler(stderr)
-    handler.setLevel(DEBUG)
-    formatter = Formatter("DEBUG: %(name)s - %(levelname)s - %(message)s")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    return logger
