@@ -14,6 +14,10 @@ NOCHOST: str = "http://localhost:8888"
 class Noclist:
     """The Noclist class calls the adhoc/noclist server."""
 
+    # BCD assumptions
+    UID_MIN_LENGHT: int = 5
+    UID_MAX_LENGTH: int = 20
+
     @staticmethod
     def authenticate(timeout: float) -> Optional[str]:
         """Returns the token."""
@@ -50,4 +54,20 @@ class Noclist:
         request = Request(url, headers=headers)
         with urlopen(request, timeout=timeout) as response:
             data: str = response.read().decode("UTF-8")
-        return data.split("\n")
+        logger: Logger = get_logger()
+        logger.debug(data)
+        uids: list[str] = data.split("\n")
+        valid_data = [uid for uid in uids if Noclist.is_valid_uid(uid)]
+        return valid_data
+
+    @staticmethod
+    def is_valid_uid(uid: str) -> bool:
+        """This validation is based on empirical evidence from BCD.  It's
+        not specified."""
+        if len(uid) < Noclist.UID_MIN_LENGHT:
+            return False
+        if Noclist.UID_MAX_LENGTH < len(uid):
+            return False
+        if not uid.isdigit():
+            return False
+        return True
