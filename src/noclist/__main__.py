@@ -32,6 +32,8 @@ def run() -> bool:
         users: list[str] = Noclist.get_users(checksum, timeout)
         print(json.dumps(users))
         return True
+    logger: Logger = get_logger()
+    logger.debug("Could not authenticate.")
     return False
 
 
