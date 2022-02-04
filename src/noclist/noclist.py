@@ -15,7 +15,7 @@ LOG: Logger = get_logger()
 class Noclist:
     """The Noclist class calls the adhoc/noclist server."""
 
-    # BCD assumptions
+    # Candidate assumptions
     UID_MIN_LENGTH: int = 5
     UID_MAX_LENGTH: int = 20
     ATTEMPT_MAX_NUM: int = 3
@@ -23,7 +23,7 @@ class Noclist:
     @staticmethod
     def authenticate(timeout: float) -> Optional[str]:
         """Returns the token."""
-        # BCD: Even though I mock out an HTTPError side_effect, urlopen will
+        # Candidate: Even though I mock out an HTTPError side_effect, urlopen will
         # raise a URLError!
         url: str = f"{NOCHOST}/auth"
         request = Request(url)
@@ -83,8 +83,9 @@ class Noclist:
 
     @staticmethod
     def is_valid_uid(uid: str) -> bool:
-        """This validation is based on empirical evidence from BCD.  It's
-        not specified."""
+        """This validation is based on empirical evidence from Candidate.  It's
+        not specified.  Assume uids are unsigned integers.  2^64 is
+        18,446,744,073,709,551,616."""
         if len(uid) < Noclist.UID_MIN_LENGTH:
             return False
         if Noclist.UID_MAX_LENGTH < len(uid):
