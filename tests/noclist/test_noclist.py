@@ -102,8 +102,13 @@ def test_get_users_bad_status(mocker: MockerFixture, timeout: float) -> None:
 
 def test_is_valid_uid() -> None:
     # Arrange
-    user_list: list[str] = ["333", "12345", "092834098230498230484", "apple"]
+    too_short: str = "333"
+    too_long: str = "239872938742983749283749723498273"
+    too_big_int: str = str(pow(2, 64))
+    non_ints: str = "apple"
+    just_right: str = "123456"
+    user_list: list[str] = [too_short, too_long, non_ints, too_big_int, just_right]
     # Act
     output = [Noclist.is_valid_uid(uid) for uid in user_list]
     # Assert
-    assert output == [False, True, False, False]
+    assert output == [False, False, False, False, True]

@@ -92,4 +92,7 @@ class Noclist:
             return False
         if not uid.isdigit():
             return False
+        int_uid: int = int(uid)
+        if pow(2, 64) - 1 < int_uid:
+            return False
         return True
