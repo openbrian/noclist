@@ -16,6 +16,7 @@ LOG: Logger = get_logger()
 
 
 def main() -> bool:
+    """Regardless of entry point, this is the main function of the app."""
     try:
         return run()
     except Exception as exc_info:  # pylint: disable=broad-except
@@ -41,6 +42,7 @@ def run() -> bool:
 
 
 def init() -> None:
+    """This function is the entry point for CLI."""
     if __name__ == "__main__":
         sys.exit(os.EX_OK if main() else os.EX_IOERR)
 
