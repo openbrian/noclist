@@ -1,4 +1,4 @@
-"""The Foo module provides things and functions."""
+"""The Noclist module is a collection of functions.  There's no state stored in the class ."""
 
 from hashlib import sha256
 from logging import Logger
@@ -22,7 +22,7 @@ class Noclist:
 
     @staticmethod
     def authenticate(timeout: float) -> Optional[str]:
-        """Returns the token."""
+        """Returns the authentication token."""
         # Candidate: Even though I mock out an HTTPError side_effect, urlopen will
         # raise a URLError!
         url: str = f"{NOCHOST}/auth"

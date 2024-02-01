@@ -5,6 +5,7 @@ from sys import stderr
 
 
 def get_logger() -> Logger:
+    """Returns a logger that writes debug to stderr."""
     logger = getLogger()
     logger.setLevel(DEBUG)
     handler = StreamHandler(stderr)
