@@ -15,7 +15,7 @@ nochost_default: str = "http://localhost:8888"
 class Noclist:
     """The Noclist class calls the adhoc/noclist server."""
 
-    # Candidate assumptions
+    # Candidate assumptions, constants
     UID_MIN_LENGTH: int = 5
     UID_MAX_LENGTH: int = 20
     ATTEMPT_MAX_NUM: int = 3
@@ -25,8 +25,7 @@ class Noclist:
         """Returns the authentication token."""
         # Candidate: Even though I mock out an HTTPError side_effect, urlopen will
         # raise a URLError!
-        url: str = f"{nochost}/auth"
-        request = Request(url)
+        request = Request(url=f"{nochost}/auth")
         [token, _] = Noclist._call_api(Noclist.ATTEMPT_MAX_NUM, request, timeout)
         if len(token) == 0:  # Assume an empty token is not a valid token
             return None
@@ -42,6 +41,7 @@ class Noclist:
            * http body or "".
         This method does not handle any business logic of Noclist aside from
         trying multiple times to call the API.
+        Returning ("", "") means the call failed.
         """
         LOG.debug("_call_api attempt %s", attempt_number)
         if attempt_number == 0:
@@ -56,8 +56,8 @@ class Noclist:
                 # present None is returned.
                 token: str = str(response.headers["badsec-authentication-token"])
                 data: str = response.read().decode("UTF-8")
-                LOG.debug(token)
-                LOG.debug(data)
+                LOG.debug("token %s", token)
+                LOG.debug("data %s", data)
                 return token, data
         except URLError as error:
             LOG.debug("There was an issue connecting to the API.")
@@ -71,15 +71,15 @@ class Noclist:
 
     @staticmethod
     def get_users(nochost: str, checksum: str, timeout: float) -> List[str]:
-        url: str = f"{nochost}/users"
-        headers: dict[str, str] = {"X-Request-Checksum": checksum}
-        request = Request(url, headers=headers)
+        """Return list of valid users."""
+        request = Request(
+            url=f"{nochost}/users", headers={"X-Request-Checksum": checksum}
+        )
         [_, data] = Noclist._call_api(Noclist.ATTEMPT_MAX_NUM, request, timeout)
         if len(data) == 0:
             return []
         uids: list[str] = data.split("\n")
-        valid_data = [uid for uid in uids if Noclist.is_valid_uid(uid)]
-        return valid_data
+        return [uid for uid in uids if Noclist.is_valid_uid(uid)]
 
     @staticmethod
     def is_valid_uid(uid: str) -> bool:
@@ -92,7 +92,6 @@ class Noclist:
             return False
         if not uid.isdigit():
             return False
-        int_uid: int = int(uid)
-        if pow(2, 64) - 1 < int_uid:
+        if pow(2, 64) - 1 < int(uid):
             return False
         return True

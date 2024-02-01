@@ -87,7 +87,8 @@ The developer may also run mypy manually to make sure typing hints are followed.
 
 * Lean on functional programming over object-oriented.
 * Avoid global variables.
-* Avoid exceptions.  Use result monad.
+* Avoid exceptions.
+* Use Optional "monad".
 * Keep functions small.
 * Do not use external libraries unless needed.
 * Avoid state in classes.
