@@ -1,8 +1,12 @@
-Template
+NocList
 ===
 
+From Mission Impossible
 
-# Build a Working Environment
+https://missionimpossiblefanon.fandom.com/wiki/NOC_List
+
+
+## Build a Working Environment
 
 ```shell
 $ python3 -m venv venv
@@ -13,7 +17,7 @@ $ poetry install
 $ pip install -e .
 ```
 
-# Test
+## Test
 
 Noclist server should not be up and running during testing.
 
@@ -25,11 +29,11 @@ $ pytest
 
 A coverage report is created in HTML format in the htmlcov folder.
 
-# Running the App
+## Running the App
 
 Optionally set an environment variables.
 
-## NOCLIST_TIMEOUT
+### NOCLIST_TIMEOUT
 
 The default timeout is 2 seconds.
 
@@ -37,7 +41,7 @@ The default timeout is 2 seconds.
 export NOCLIST_TIMEOUT=1.0
 ```
 
-## BADSEC_SERVER
+### BADSEC_SERVER
 
 The default is http://localhost:8888.
 
@@ -62,7 +66,7 @@ python -m src.noclist 2>/dev/null
 
 Debugging output is sent to stderr.
 
-# Development
+## Development
 
 This project uses pre-commit with several quality checks:
 
@@ -83,7 +87,7 @@ $ mypy
 
 The developer may also run mypy manually to make sure typing hints are followed.
 
-# Design Principals
+## Design Principals
 
 * Lean on functional programming over object-oriented.
 * Avoid global variables.
@@ -93,7 +97,7 @@ The developer may also run mypy manually to make sure typing hints are followed.
 * Do not use external libraries unless needed.
 * Avoid state in classes.
 
-# Other
+## Other
 
 This project was created based on the templatr template.
 
