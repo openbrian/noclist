@@ -9,7 +9,7 @@ import os
 import sys
 from logging import Logger
 
-from src.noclist.noclist import Noclist
+from src.noclist.noclist import Noclist, nochost_default
 from src.noclist.utils import get_logger
 
 LOG: Logger = get_logger()
@@ -28,10 +28,11 @@ def main() -> bool:
 def run() -> bool:
     """Execute the Something standalone command-line tool."""
     timeout: float = float(os.getenv("NOCLIST_TIMEOUT", "2.0"))  # seconds
-    token: str = Noclist.authenticate(timeout)
+    nochost: str = os.getenv("BADSEC_SERVER", nochost_default)
+    token: str = Noclist.authenticate(nochost, timeout)
     if token is not None:
         checksum: str = Noclist.build_checksum(token, "/users")
-        users: list[str] = Noclist.get_users(checksum, timeout)
+        users: list[str] = Noclist.get_users(nochost, checksum, timeout)
         if len(users) == 0:
             LOG.debug("/users returned no valid users")
             return False

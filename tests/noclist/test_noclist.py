@@ -6,7 +6,7 @@ from urllib.error import HTTPError, URLError
 
 from pytest_mock import MockerFixture
 
-from src.noclist.noclist import Noclist
+from src.noclist.noclist import Noclist, nochost_default
 
 
 def test_authenticate(mocker: MockerFixture, timeout: float) -> None:
@@ -20,7 +20,7 @@ def test_authenticate(mocker: MockerFixture, timeout: float) -> None:
     context_manager.__enter__.return_value = context_manager
     mock_urlopen.return_value = context_manager
     # Act and Assert
-    assert Noclist.authenticate(timeout) == token
+    assert Noclist.authenticate(nochost_default, timeout) == token
 
 
 def test_authenticate_bad_status(
@@ -34,7 +34,7 @@ def test_authenticate_bad_status(
     context_manager.__enter__.return_value = context_manager
     mock_urlopen.return_value = context_manager
     # Act and Assert
-    assert Noclist.authenticate(timeout) is None
+    assert Noclist.authenticate(nochost_default, timeout) is None
 
 
 def test_authenticate_server_down(
@@ -45,7 +45,7 @@ def test_authenticate_server_down(
     message = "The connection refused"
     mocker.patch("urllib.request.urlopen", side_effect=URLError(message))
     # Act and Assert
-    assert Noclist.authenticate(timeout) is None
+    assert Noclist.authenticate(nochost_default, timeout) is None
 
 
 def test_authenticate_http_error(
@@ -57,7 +57,7 @@ def test_authenticate_http_error(
     http_error: HTTPError = HTTPError("url", 42, "msg", message, None)
     mocker.patch("urllib.request.urlopen", side_effect=http_error)
     # Act and Assert
-    assert Noclist.authenticate(timeout) is None
+    assert Noclist.authenticate(nochost_default, timeout) is None
 
 
 def test_build_checksum() -> None:
@@ -85,7 +85,7 @@ def test_get_users(mocker: MockerFixture, timeout: float) -> None:
     context_manager.__enter__.return_value = context_manager
     mock_urlopen.return_value = context_manager
     # Act and Assert
-    assert Noclist.get_users("checksum", timeout) == [user_list]
+    assert Noclist.get_users(nochost_default, "checksum", timeout) == [user_list]
 
 
 def test_get_users_bad_status(mocker: MockerFixture, timeout: float) -> None:
@@ -97,7 +97,7 @@ def test_get_users_bad_status(mocker: MockerFixture, timeout: float) -> None:
     context_manager.__enter__.return_value = context_manager
     mock_urlopen.return_value = context_manager
     # Act and Assert
-    assert Noclist.get_users("checksum", timeout) == []
+    assert Noclist.get_users(nochost_default, "checksum", timeout) == []
 
 
 def test_is_valid_uid() -> None:

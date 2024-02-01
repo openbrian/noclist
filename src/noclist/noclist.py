@@ -8,8 +8,8 @@ from urllib.request import Request, urlopen
 
 from src.noclist.utils import get_logger
 
-NOCHOST: str = "http://localhost:8888"
 LOG: Logger = get_logger()
+nochost_default: str = "http://localhost:8888"
 
 
 class Noclist:
@@ -21,11 +21,11 @@ class Noclist:
     ATTEMPT_MAX_NUM: int = 3
 
     @staticmethod
-    def authenticate(timeout: float) -> Optional[str]:
+    def authenticate(nochost: str, timeout: float) -> Optional[str]:
         """Returns the authentication token."""
         # Candidate: Even though I mock out an HTTPError side_effect, urlopen will
         # raise a URLError!
-        url: str = f"{NOCHOST}/auth"
+        url: str = f"{nochost}/auth"
         request = Request(url)
         [token, _] = Noclist._call_api(Noclist.ATTEMPT_MAX_NUM, request, timeout)
         if len(token) == 0:  # Assume an empty token is not a valid token
@@ -70,8 +70,8 @@ class Noclist:
         return sha256(target).hexdigest()
 
     @staticmethod
-    def get_users(checksum: str, timeout: float) -> List[str]:
-        url: str = f"{NOCHOST}/users"
+    def get_users(nochost: str, checksum: str, timeout: float) -> List[str]:
+        url: str = f"{nochost}/users"
         headers: dict[str, str] = {"X-Request-Checksum": checksum}
         request = Request(url, headers=headers)
         [_, data] = Noclist._call_api(Noclist.ATTEMPT_MAX_NUM, request, timeout)

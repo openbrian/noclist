@@ -27,10 +27,22 @@ A coverage report is created in HTML format in the htmlcov folder.
 
 # Using
 
-Optionally set an environment variable for the timeout.  The default timeout is 2 seconds.
+Optionally set an environment variables.
+
+## NOCLIST_TIMEOUT
+
+The default timeout is 2 seconds.
 
 ```shell
 export NOCLIST_TIMEOUT=1.0
+```
+
+## BADSEC_SERVER
+
+The default is http://localhost:8888.
+
+```shell
+export BADSEC_SERVER=<url>
 ```
 
 Start a BADLIST server.  This image is not versioned.  This app is known to work with the version from May of 2018 (digest c23f36fccfc).
