@@ -1,0 +1,14 @@
+digraph {
+  authenticate -> "_call_api";
+  authenticate -> Request;
+  "_call_api" -> urlopen;
+  "_call_api" -> "_call_api";
+  get_users -> Request;
+  get_users -> "_call_api";
+  get_users -> is_valid_uid;
+  init -> main;
+  main -> run;
+  run -> authenticate;
+  run -> build_checksum;
+  run -> get_users;
+}

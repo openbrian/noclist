@@ -91,3 +91,9 @@ The developer may also run mypy manually to make sure typing hints are followed.
 * Keep functions small.
 * Do not use external libraries unless needed.
 * Avoid state in classes.
+
+# Other
+
+This project was created based on the templatr template.
+
+https://github.com/openbrian/templatr
