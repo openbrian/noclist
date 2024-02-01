@@ -25,7 +25,7 @@ $ pytest
 
 A coverage report is created in HTML format in the htmlcov folder.
 
-# Using
+# Running the App
 
 Optionally set an environment variables.
 
